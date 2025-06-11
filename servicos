@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J2FX Tecnologia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9f9;
+      color: #222;
+    }
+    header {
+      background-color: #1a1a1a;
+      color: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    header p {
+      margin: 0.5rem 0 0;
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+    .section {
+      padding: 3rem 1rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    .section h2 {
+      color: #111;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem; /* Ajustado para dar mais espaço */
+      text-align: center; /* Centraliza o título da seção */
+    }
+
+    /* Estilos para o container dos cards */
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsivo: 280px mínimo, 1fr para preencher */
+      gap: 2rem; /* Espaçamento entre os cards */
+      justify-content: center; /* Centraliza os cards quando houver menos que o preenchimento total */
+    }
+
+    /* Estilos para cada card de serviço */
+    .service-card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Para empurrar o preço para baixo se houver variação na altura */
+      transition: transform 0.2s ease-in-out; /* Efeito de transição ao passar o mouse */
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px); /* Efeito de "levantar" ao passar o mouse */
+    }
+
+    .service-card h3 {
+      margin-top: 0; /* Remove margem superior padrão */
+      margin-bottom: 0.8rem;
+      color: #1a1a1a;
+      font-size: 1.3rem;
+    }
+    .service-card p {
+      margin: 0.5rem 0; /* Ajusta a margem para parágrafos */
+      line-height: 1.5; /* Melhora a legibilidade */
+      flex-grow: 1; /* Permite que o parágrafo ocupe o espaço restante */
+    }
+    .service-card .price {
+      font-weight: 600;
+      color: #e65928; /* Cor do preço destacada */
+      font-size: 1.1rem;
+      margin-top: 1rem; /* Espaço acima do preço */
+    }
+
+    .cta {
+      background-color: #e65928;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .cta a {
+      display: inline-block;
+      background-color: #fff;
+      color: #e65928;
+      padding: 0.75rem 1.5rem;
+      margin-top: 1rem;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; /* Efeito de transição */
+    }
+
+    .cta a:hover {
+      background-color: #f2f2f2; /* Um tom mais claro no hover */
+      color: #d14a1a; /* Um tom mais escuro da cor principal */
+    }
+
+    footer {
+      background-color: #1a1a1a;
+      color: #ccc;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>J2FX Tecnologia</h1>
+    <p>Tecnologia simples. Resultados reais.</p>
+  </header>
+
+  <div class="section">
+    <h2>O que fazemos</h2>
+    <div class="cards-container">
+      <div class="service-card">
+        <h3>🔍 Diagnóstico Digital Rápido</h3>
+        <p>Avaliação para entender o que seu negócio realmente precisa em tecnologia.</p>
+        <p class="price"><strong>R$ 149</strong></p>
+      </div>
+      <div class="service-card">
+        <h3>🌐 Presença Digital Básica</h3>
+        <p>Coloque sua marca no Google, Instagram e tenha um site profissional.</p>
+        <p class="price"><strong>A partir de R$ 499</strong></p>
+      </div>
+      <div class="service-card">
+        <h3>🤖 Automação e Organização</h3>
+        <p>Automatize tarefas e organize seu fluxo digital com ferramentas acessíveis.</p>
+        <p class="price"><strong>A partir de R$ 299</strong></p>
+      </div>
+      <div class="service-card">
+        <h3>📊 Mini ERP sob medida</h3>
+        <p>Controle suas vendas, estoque, clientes e finanças de forma simples.</p>
+        <p class="price"><strong>A partir de R$ 800</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Planos Rápidos</h2>
+    <div class="cards-container">
+      <div class="service-card">
+        <h3>Essencial</h3>
+        <p>Diagnóstico + Presença Digital</p>
+        <p class="price"><strong>R$ 699</strong></p>
+      </div>
+      <div class="service-card">
+        <h3>Produtivo</h3>
+        <p>Diagnóstico + Automação + Suporte 30 dias</p>
+        <p class="price"><strong>R$ 999</strong></p>
+      </div>
+      <div class="service-card">
+        <h3>Inteligente</h3>
+        <p>Diagnóstico + Mini ERP + Presença Digital</p>
+        <p class="price"><strong>R$ 1.499</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h2>Fale direto comigo</h2>
+    <p>Sem intermediários. Atendimento humano e personalizado.</p>
+    <a href="https://wa.me/seunumerodowhatsapp" target="_blank">Chamar no WhatsApp</a>
+  </div>
+
+  <footer>
+    <p>© 2025 J2FX Tecnologia. Todos os direitos reservados.</p>
+  </footer>
+</body>
+</html>
