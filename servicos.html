@@ -4,111 +4,237 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>J2FX Tecnologia</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    :root {
+      --primary-color: #007bff; /* Azul vibrante */
+      --secondary-color: #6c757d; /* Cinza para detalhes */
+      --accent-color: #28a745; /* Verde para destaque (ex: sucesso, chamada) */
+      --dark-bg: #1a1a1a;
+      --light-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #343a40;
+      --light-text-color: #e0e0e0;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.15);
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #f9f9f9;
-      color: #222;
+      background-color: var(--light-bg);
+      color: var(--text-color);
+      line-height: 1.6;
     }
+
     header {
-      background-color: #1a1a1a;
+      background-color: var(--dark-bg);
       color: #fff;
-      padding: 2rem 1rem;
+      padding: 4rem 1rem; /* Mais padding para um visual mais espaçoso */
       text-align: center;
+      position: relative;
+      overflow: hidden; /* Para garantir que o gradiente não vaze */
     }
+
+    /* Efeito de gradiente sutil no fundo do header */
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(26, 26, 26, 0.8) 100%);
+      z-index: 1;
+    }
+
     header h1 {
       margin: 0;
-      font-size: 2.5rem;
+      font-size: 3.5rem; /* Fonte maior */
+      font-weight: 700;
+      letter-spacing: -0.05em; /* Espaçamento mais apertado para o título */
+      position: relative;
+      z-index: 2;
     }
+
     header p {
-      margin: 0.5rem 0 0;
-      font-size: 1.2rem;
-      color: #ccc;
+      margin: 0.8rem 0 0;
+      font-size: 1.4rem; /* Fonte maior */
+      color: var(--light-text-color);
+      font-weight: 300;
+      position: relative;
+      z-index: 2;
     }
+
     .section {
-      padding: 3rem 1rem;
-      max-width: 900px;
+      padding: 4rem 1rem; /* Mais padding */
+      max-width: 1000px; /* Largura um pouco maior */
       margin: auto;
     }
+
     .section h2 {
-      color: #111;
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem; /* Ajustado para dar mais espaço */
-      text-align: center; /* Centraliza o título da seção */
+      color: var(--dark-bg);
+      font-size: 2.5rem; /* Título de seção maior */
+      font-weight: 700;
+      margin-bottom: 2.5rem; /* Mais espaço */
+      text-align: center;
+      position: relative;
+      padding-bottom: 15px; /* Espaço para o underline */
     }
 
-    /* Estilos para o container dos cards */
+    /* Underline animado para os títulos das seções */
+    .section h2::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background-color: var(--primary-color);
+      border-radius: 2px;
+    }
+
     .cards-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsivo: 280px mínimo, 1fr para preencher */
-      gap: 2rem; /* Espaçamento entre os cards */
-      justify-content: center; /* Centraliza os cards quando houver menos que o preenchimento total */
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem; /* Mais espaçamento entre os cards */
+      justify-content: center;
     }
 
-    /* Estilos para cada card de serviço */
     .service-card {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
-      padding: 1.5rem;
+      background-color: var(--card-bg);
+      border-radius: 12px; /* Bordas mais arredondadas */
+      box-shadow: 0 8px 20px var(--shadow-light); /* Sombra mais pronunciada */
+      padding: 2rem; /* Mais padding interno */
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Para empurrar o preço para baixo se houver variação na altura */
-      transition: transform 0.2s ease-in-out; /* Efeito de transição ao passar o mouse */
+      justify-content: space-between;
+      transition: all 0.3s ease-in-out; /* Transição suave para todas as propriedades */
+      border: 1px solid rgba(0, 0, 0, 0.05); /* Borda sutil */
     }
 
     .service-card:hover {
-      transform: translateY(-5px); /* Efeito de "levantar" ao passar o mouse */
+      transform: translateY(-8px) scale(1.02); /* Efeito de levantar e expandir */
+      box-shadow: 0 12px 25px var(--shadow-medium); /* Sombra mais forte no hover */
     }
 
     .service-card h3 {
-      margin-top: 0; /* Remove margem superior padrão */
-      margin-bottom: 0.8rem;
-      color: #1a1a1a;
-      font-size: 1.3rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: var(--primary-color); /* Título do card com a cor primária */
+      font-size: 1.6rem; /* Fonte maior */
+      display: flex;
+      align-items: center;
     }
+
+    .service-card h3 i {
+      margin-right: 10px; /* Espaço entre o ícone e o título */
+      font-size: 1.8rem; /* Tamanho maior para os ícones */
+      color: var(--secondary-color);
+    }
+
     .service-card p {
-      margin: 0.5rem 0; /* Ajusta a margem para parágrafos */
-      line-height: 1.5; /* Melhora a legibilidade */
-      flex-grow: 1; /* Permite que o parágrafo ocupe o espaço restante */
+      margin: 0.8rem 0;
+      line-height: 1.7;
+      flex-grow: 1;
+      color: var(--text-color);
     }
+
     .service-card .price {
-      font-weight: 600;
-      color: #e65928; /* Cor do preço destacada */
-      font-size: 1.1rem;
-      margin-top: 1rem; /* Espaço acima do preço */
+      font-weight: 700;
+      color: var(--accent-color); /* Preço com a cor de destaque */
+      font-size: 1.3rem; /* Preço maior */
+      margin-top: 1.5rem; /* Mais espaço */
+      align-self: flex-end; /* Alinha o preço à direita na parte inferior */
     }
 
     .cta {
-      background-color: #e65928;
+      background-color: var(--primary-color); /* CTA com cor primária */
       color: white;
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 4rem 1rem; /* Mais padding */
     }
+
+    .cta h2 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      font-size: 1.3rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+    }
+
     .cta a {
       display: inline-block;
       background-color: #fff;
-      color: #e65928;
-      padding: 0.75rem 1.5rem;
+      color: var(--primary-color);
+      padding: 1rem 2.5rem; /* Botão maior */
       margin-top: 1rem;
       text-decoration: none;
-      border-radius: 6px;
-      font-weight: 600;
-      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; /* Efeito de transição */
+      border-radius: 30px; /* Mais arredondado (pill shape) */
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
     .cta a:hover {
-      background-color: #f2f2f2; /* Um tom mais claro no hover */
-      color: #d14a1a; /* Um tom mais escuro da cor principal */
+      background-color: var(--dark-bg); /* Fundo escuro no hover */
+      color: #fff; /* Texto branco no hover */
+      transform: translateY(-3px); /* Efeito de levantar no hover */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
     }
 
     footer {
-      background-color: #1a1a1a;
-      color: #ccc;
+      background-color: var(--dark-bg);
+      color: var(--light-text-color);
       text-align: center;
-      padding: 1rem;
+      padding: 2rem; /* Mais padding no footer */
+      font-size: 0.95rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.8rem;
+      }
+      header p {
+        font-size: 1.1rem;
+      }
+      .section h2 {
+        font-size: 2rem;
+      }
+      .cards-container {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+      }
+      .service-card {
+        padding: 1.5rem;
+      }
+      .service-card h3 {
+        font-size: 1.4rem;
+      }
+      .service-card h3 i {
+        font-size: 1.6rem;
+      }
+      .service-card .price {
+        font-size: 1.2rem;
+      }
+      .cta h2 {
+        font-size: 2.2rem;
+      }
+      .cta p {
+        font-size: 1.1rem;
+      }
+      .cta a {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
@@ -122,22 +248,22 @@
     <h2>O que fazemos</h2>
     <div class="cards-container">
       <div class="service-card">
-        <h3>🔍 Diagnóstico Digital Rápido</h3>
+        <h3><i class="fas fa-search-dollar"></i> Diagnóstico Digital Rápido</h3>
         <p>Avaliação para entender o que seu negócio realmente precisa em tecnologia.</p>
         <p class="price"><strong>R$ 149</strong></p>
       </div>
       <div class="service-card">
-        <h3>🌐 Presença Digital Básica</h3>
+        <h3><i class="fas fa-globe"></i> Presença Digital Básica</h3>
         <p>Coloque sua marca no Google, Instagram e tenha um site profissional.</p>
         <p class="price"><strong>A partir de R$ 499</strong></p>
       </div>
       <div class="service-card">
-        <h3>🤖 Automação e Organização</h3>
+        <h3><i class="fas fa-robot"></i> Automação e Organização</h3>
         <p>Automatize tarefas e organize seu fluxo digital com ferramentas acessíveis.</p>
         <p class="price"><strong>A partir de R$ 299</strong></p>
       </div>
       <div class="service-card">
-        <h3>📊 Mini ERP sob medida</h3>
+        <h3><i class="fas fa-chart-line"></i> Mini ERP sob medida</h3>
         <p>Controle suas vendas, estoque, clientes e finanças de forma simples.</p>
         <p class="price"><strong>A partir de R$ 800</strong></p>
       </div>
@@ -148,17 +274,17 @@
     <h2>Planos Rápidos</h2>
     <div class="cards-container">
       <div class="service-card">
-        <h3>Essencial</h3>
+        <h3><i class="fas fa-handshake"></i> Essencial</h3>
         <p>Diagnóstico + Presença Digital</p>
         <p class="price"><strong>R$ 699</strong></p>
       </div>
       <div class="service-card">
-        <h3>Produtivo</h3>
+        <h3><i class="fas fa-rocket"></i> Produtivo</h3>
         <p>Diagnóstico + Automação + Suporte 30 dias</p>
         <p class="price"><strong>R$ 999</strong></p>
       </div>
       <div class="service-card">
-        <h3>Inteligente</h3>
+        <h3><i class="fas fa-brain"></i> Inteligente</h3>
         <p>Diagnóstico + Mini ERP + Presença Digital</p>
         <p class="price"><strong>R$ 1.499</strong></p>
       </div>
