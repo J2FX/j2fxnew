@@ -1,4 +1,5 @@
-(function () {
+(function() {
+  // Configuração do widget – tudo aqui mesmo!
   const widgetConfig = {
     title: "🔊 Tour em Áudio",
     position: "bottom-right",
@@ -9,232 +10,261 @@
     logoUrl: "https://pluralweb-audios.s3.sa-east-1.amazonaws.com/setup/logo-pluralweb.png"
   };
 
+  // Estilos do Widget
   const style = document.createElement("style");
   style.innerHTML = `
     #audioWidget {
       position: fixed;
-      ${widgetConfig.position === "top-right" ? "top: 20px; right: 20px;" :
-      widgetConfig.position === "top-left" ? "top: 20px; left: 20px;" :
-      widgetConfig.position === "bottom-right" ? "bottom: 20px; right: 20px;" :
-        "bottom: 20px; left: 20px;"}
-      background: ${widgetConfig.theme === "dark" ? "#333" : "#fff"};
-      color: ${widgetConfig.theme === "dark" ? "#fff" : "#333"};
-      border: 1px solid ${widgetConfig.theme === "dark" ? "#555" : "#ccc"};
-      padding: 15px;
-      z-index: 9999;
-      width: 300px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-      border-radius: 10px;
-      font-family: Arial, sans-serif;
-      transition: all 0.3s ease;
-    }
-    #audioWidget.collapsed {
-      width: auto;
-      padding: 10px;
-    }
-    #audioHeader {
+      ${widgetConfig.position === "bottom-right"
+        ? "bottom: 32px; right: 32px;"
+        : "bottom: 32px; left: 32px;"}
+      z-index: 10000;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 2px 48px 0 rgba(60, 60, 60, 0.20);
+      font-family: sans-serif;
+      min-width: 340px;
+      max-width: 400px;
+      padding: 20px 22px 22px 22px;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 18px;
+      transition: box-shadow 0.2s;
+    }
+    #audioWidget.dark {
+      background: #1b1b1b;
+      color: #fff;
+    }
+    #audioWidgetHeader {
+      display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      gap: 12px;
+      font-size: 1.20em;
+      font-weight: 700;
+      margin-bottom: 0;
     }
-    #audioLogo {
-      width: 30px;
-      height: auto;
-      margin-right: 10px;
+    #audioWidgetHeader img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      object-fit: contain;
     }
-    #audioTitle {
-      flex-grow: 1;
-    }
-    #audioWidget h4 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    #audioToggle {
-      background: none;
-      border: none;
-      color: ${widgetConfig.theme === "dark" ? "#fff" : "#333"};
-      cursor: pointer;
-      font-size: 18px;
-      padding: 0;
-    }
-    #audioPlayer {
+    #playerContainer {
       width: 100%;
     }
     .status-message {
-      padding: 10px 0;
+      font-size: 1.06em;
+      color: #777;
+      padding: 8px 0;
+      min-height: 32px;
       text-align: center;
-      font-style: italic;
-      color: #666;
-      font-size: 13px;
     }
-    .debug-info {
-      margin-top: 10px;
-      padding: 5px;
-      border: 1px dashed #ccc;
-      border-radius: 4px;
-      font-size: 11px;
-      color: #666;
-      display: none;
+    .audio-list-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 8px 0 0 0;
+    }
+    .audio-btn {
+      background: #ececec;
+      border: none;
+      outline: none;
+      border-radius: 7px;
+      padding: 8px 15px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #audioWidget.dark .audio-btn {
+      background: #232323;
+      color: #fff;
+    }
+    .audio-btn:active {
+      background: #003580;
+      color: #fff;
+    }
+    .audio-btn.selected {
+      background: #0071ff;
+      color: #fff;
+    }
+    .audio-btn:disabled {
+      background: #ccc;
+      color: #888;
+      cursor: not-allowed;
+    }
+    @media screen and (max-width: 600px) {
+      #audioWidget { 
+        min-width: 180px;
+        max-width: 98vw;
+        left: 3vw !important;
+        right: 3vw !important;
+        padding: 13px 10px 12px 10px;
+      }
+      #audioWidgetHeader { font-size: 1em; }
     }
   `;
   document.head.appendChild(style);
 
+  // Criação de elementos HTML do widget
   const widget = document.createElement("div");
   widget.id = "audioWidget";
+  if (widgetConfig.theme === "dark") widget.classList.add("dark");
+
   widget.innerHTML = `
-    <div id="audioHeader">
-      <img id="audioLogo" src="${widgetConfig.logoUrl}" alt="PluralWeb Logo">
-      <div id="audioTitle">
-        <h4>${widgetConfig.title}</h4>
-      </div>
-      <button id="audioToggle" aria-label="Minimizar">−</button>
+    <div id="audioWidgetHeader">
+      <img src="${widgetConfig.logoUrl}" alt="logo" />
+      <span>${widgetConfig.title}</span>
     </div>
-    <div id="audioContent">
-      <div id="playerContainer">
-        <div class="status-message">Inicializando player...</div>
-      </div>
-      <div class="debug-info" id="debugInfo"></div>
+    <div id="playerContainer">
+      <div class="status-message">Carregando...</div>
+    </div>
+    <div id="widgetHelpers" style="font-size:12px;color:#888;text-align:center;">
+      Use <b>teclas numéricas</b> para ouvir cada trecho.<br>
+      <b>0</b> para o tour completo.
     </div>
   `;
   document.body.appendChild(widget);
 
-  const toggleBtn = document.getElementById("audioToggle");
-  const content = document.getElementById("audioContent");
-  const widgetElement = document.getElementById("audioWidget");
-  const titleDiv = document.getElementById("audioTitle");
-  
-  // IDs das seções e respectivo slug no supabase
-  const sectionSlugs = {
-    "home": "home",
-    "servicos": "servicos",
-    "solucoes": "solucoes",
-    "tour": "tour"
-  };
-
-  // Teclas de navegação para seções
-  const sectionKeys = {
-    "1": "home",
-    "2": "servicos",
-    "3": "solucoes",
-    "0": "tour"
-  };
-
-  // Slug do áudio de menu
-  const menuSlug = "menu";
-
+  let sections = [];
   let currentSection = null;
-  let aguardandoEscolha = true;
-  let audioPlayer = null;
 
-  // Cria ou pega elemento de player
-  function getPlayer() {
-    let player = document.getElementById("audio-widget-player");
-    if (!player) {
-      player = document.createElement("audio");
-      player.id = "audio-widget-player";
-      player.style.display = "none";
-      document.body.appendChild(player);
-    }
-    return player;
-  }
-
-  // Busca áudio do Supabase
-  async function fetchAudioUrl(slug) {
-    let url = widgetConfig.supabaseUrl + `?slug=eq.${slug}&select=url`;
-    let res = await fetch(url, {
-      headers: {
-        apikey: widgetConfig.apiKey,
-        Authorization: `Bearer ${widgetConfig.apiKey}`
+  // Carregar seções do Supabase
+  async function fetchSections() {
+    const playerContainer = document.getElementById("playerContainer");
+    playerContainer.innerHTML = '<div class="status-message">Carregando...</div>';
+    try {
+      const response = await fetch(
+        `${widgetConfig.supabaseUrl}?order=order.asc,slug.asc&select=slug,title,url`,
+        {
+          headers: {
+            apikey: widgetConfig.apiKey,
+            Authorization: `Bearer ${widgetConfig.apiKey}`
+          }
+        }
+      );
+      const data = await response.json();
+      if (data && data.length) {
+        // Separa o tour (slug == 'tour') das demais seções
+        sections = data.filter(s => s.slug !== 'tour');
+        window.sections = sections;
+        createAudioButtons();
+        // autoplay na primeira seção se desejado
+        if (widgetConfig.autoplay && sections.length) {
+          playSection(0);
+        } else {
+          playerContainer.innerHTML = '<div class="status-message">Selecione ou digite o número da seção desejada, ou 0 para tour completo.</div>';
+        }
+      } else {
+        playerContainer.innerHTML = '<div class="status-message">Nenhum áudio disponível.</div>';
       }
+    } catch (err) {
+      playerContainer.innerHTML = '<div class="status-message">Erro ao carregar os áudios.</div>';
+    }
+  }
+
+  // Cria botões para cada seção
+  function createAudioButtons() {
+    let buttonsContainer = widget.querySelector('.audio-list-buttons');
+    if (buttonsContainer) buttonsContainer.remove();
+    buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'audio-list-buttons';
+    sections.forEach((section, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'audio-btn';
+      btn.textContent = `${i+1}. ${section.title || section.slug}`;
+      btn.onclick = () => playSection(i);
+      btn.dataset.idx = i;
+      buttonsContainer.appendChild(btn);
     });
-    let data = await res.json();
-    if (data && data.length && data[0].url) return data[0].url;
-    return null;
+    widget.appendChild(buttonsContainer);
   }
 
-  // Reproduz áudio genérico
-  function playAudio(src, onend) {
-    audioPlayer = getPlayer();
-    audioPlayer.src = src;
-    audioPlayer.onended = onend;
-    audioPlayer.play();
+  // Toca uma seção específica
+  function playSection(idx) {
+    const playerContainer = document.getElementById("playerContainer");
+    if (!sections[idx]) return;
+    currentSection = idx;
+    // Atualiza UI
+    let btns = widget.querySelectorAll('.audio-btn');
+    [...btns].forEach(btn => btn.classList.remove('selected'));
+    if (btns[idx]) btns[idx].classList.add('selected');
+    // Audio player
+    playerContainer.innerHTML = `
+      <audio id="audioPlayer" controls autoplay>
+        <source src="${sections[idx].url}" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+      </audio>
+      <div class="status-message">Tocando: ${sections[idx].title || sections[idx].slug}</div>
+    `;
+    const audioPlayer = document.getElementById('audioPlayer');
+    audioPlayer.onended = () => {
+      playerContainer.innerHTML +=
+        '<div class="status-message">Trecho finalizado. Selecione outro ou pressione uma tecla numérica.</div>';
+    };
+    audioPlayer.focus();
   }
 
-  // Toca o áudio da seção indicada
-  async function playSectionAudio(sectionId) {
-    aguardandoEscolha = false;
-    const slug = sectionSlugs[sectionId];
-    if (!slug) return;
-    const audioUrl = await fetchAudioUrl(slug);
-    if (audioUrl) {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-      setTimeout(() => {
-        playAudio(audioUrl, () => {
-          aguardandoEscolha = true;
-          playMenuAudio();
-        });
-      }, 500);
-    } else {
-      aguardandoEscolha = true;
-      playMenuAudio();
-    }
-  }
-
-  // Toca o áudio do menu
-  async function playMenuAudio() {
-    const menuUrl = await fetchAudioUrl(menuSlug);
-    if (menuUrl) {
-      playAudio(menuUrl, () => {
-        aguardandoEscolha = true;
-        // Depois do menu, aguarda ação do usuário
-      });
-    }
-  }
-
-  // Descobre seção na tela ao rolar (mantida sua estrutura)
-  function getSectionInView() {
-    const sections = document.querySelectorAll("section");
-    let sectionId = null;
-    let minOffset = Number.POSITIVE_INFINITY;
-    sections.forEach((section) => {
-      const rect = section.getBoundingClientRect();
-      if (rect.top >= 0 && rect.top < minOffset) {
-        minOffset = rect.top;
-        sectionId = section.id;
+  // Toca o áudio tour completo (slug == 'tour')
+  async function playTour() {
+    const playerContainer = document.getElementById("playerContainer");
+    playerContainer.innerHTML = '<div class="status-message">Carregando tour de áudio...</div>';
+    try {
+      const response = await fetch(
+        `${widgetConfig.supabaseUrl}?slug=eq.tour&select=url,title`,
+        {
+          headers: {
+            apikey: widgetConfig.apiKey,
+            Authorization: `Bearer ${widgetConfig.apiKey}`
+          }
+        }
+      );
+      const data = await response.json();
+      if (data && data.length && data[0].url) {
+        playerContainer.innerHTML = `
+          <audio id="audioPlayer" controls autoplay>
+            <source src="${data[0].url}" type="audio/mpeg">
+            Seu navegador não suporta áudio.
+          </audio>
+          <div class="status-message">Tocando: ${data[0].title || "Tour completo"}</div>
+        `;
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.onended = function () {
+          playerContainer.innerHTML = `
+            <div class="status-message">
+              Tour finalizado.<br>
+              Aperte qualquer número de 1 a ${sections.length || 9} para uma seção, ou 0 para repetir o tour.
+            </div>
+          `;
+        };
+        audioPlayer.focus();
+      } else {
+        playerContainer.innerHTML = '<div class="status-message">Áudio do tour não encontrado.</div>';
       }
-    });
-    return sectionId;
-  }
-
-  function handleSectionChange() {
-    if (!aguardandoEscolha) return;
-    const newSection = getSectionInView();
-    if (newSection !== currentSection) {
-      currentSection = newSection;
-      playSectionAudio(currentSection);
+    } catch (err) {
+      playerContainer.innerHTML = '<div class="status-message">Erro ao carregar o tour.</div>';
     }
   }
 
-  // Monitoramento: rolar página
-  window.addEventListener("scroll", () => {
-    setTimeout(handleSectionChange, 150);
-  });
-
-  // Na entrada do site, toca menu (e depois seção visível)
-  document.addEventListener("DOMContentLoaded", () => {
-    currentSection = getSectionInView();
-    playMenuAudio();
-  });
-
-  // Teclas: 1,2,3,0 (zero para o tour), sempre toca menu no fim
-  document.addEventListener("keydown", (e) => {
-    if (!aguardandoEscolha) return;
-    const sectionId = sectionKeys[e.key];
-    if (sectionId) {
-      playSectionAudio(sectionId);
+  // EVENTO: Teclas do teclado (1,2,3...,0 para o tour)
+  document.addEventListener('keydown', function (event) {
+    // Teclas numéricas 1 a N (notando que event.key é string '1', '2', etc.)
+    if (/^[1-9]$/.test(event.key)) {
+      const idx = Number(event.key) - 1;
+      if (sections[idx]) {
+        event.preventDefault();
+        playSection(idx);
+      }
+    }
+    // Tecla 0 para tour
+    if (event.key === "0") {
+      event.preventDefault();
+      playTour();
     }
   });
+
+  // Inicialização automática
+  fetchSections();
 
 })();
