@@ -6,9 +6,105 @@
     autoplay: true,
     apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNuaGdxbWZlZ2F3a2piaXdndmVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyMTA5MDUsImV4cCI6MjA2MTc4NjkwNX0.SjMbOC1zmsorsx8c9658Mu2MZQOpEQtT5jtNcUdAsl4",
     supabaseUrl: "https://cnhgqmfegawkjbiwgvef.supabase.co/rest/v1/audios",
-    logoUrl: "https://pluralweb-audios.s3.amazonaws.com/pluralweb-logo.png"
+    logoUrl: "https://pluralweb-audios.s3.sa-east-1.amazonaws.com/setup/logo-pluralweb.png"
   };
 
+  const style = document.createElement("style");
+  style.innerHTML = `
+    #audioWidget {
+      position: fixed;
+      ${widgetConfig.position === "top-right" ? "top: 20px; right: 20px;" :
+      widgetConfig.position === "top-left" ? "top: 20px; left: 20px;" :
+      widgetConfig.position === "bottom-right" ? "bottom: 20px; right: 20px;" :
+        "bottom: 20px; left: 20px;"}
+      background: ${widgetConfig.theme === "dark" ? "#333" : "#fff"};
+      color: ${widgetConfig.theme === "dark" ? "#fff" : "#333"};
+      border: 1px solid ${widgetConfig.theme === "dark" ? "#555" : "#ccc"};
+      padding: 15px;
+      z-index: 9999;
+      width: 300px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      font-family: Arial, sans-serif;
+      transition: all 0.3s ease;
+    }
+    #audioWidget.collapsed {
+      width: auto;
+      padding: 10px;
+    }
+    #audioHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    #audioLogo {
+      width: 30px;
+      height: auto;
+      margin-right: 10px;
+    }
+    #audioTitle {
+      flex-grow: 1;
+    }
+    #audioWidget h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    #audioToggle {
+      background: none;
+      border: none;
+      color: ${widgetConfig.theme === "dark" ? "#fff" : "#333"};
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0;
+    }
+    #audioPlayer {
+      width: 100%;
+    }
+    .status-message {
+      padding: 10px 0;
+      text-align: center;
+      font-style: italic;
+      color: #666;
+      font-size: 13px;
+    }
+    .debug-info {
+      margin-top: 10px;
+      padding: 5px;
+      border: 1px dashed #ccc;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #666;
+      display: none;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const widget = document.createElement("div");
+  widget.id = "audioWidget";
+  widget.innerHTML = `
+    <div id="audioHeader">
+      <img id="audioLogo" src="${widgetConfig.logoUrl}" alt="PluralWeb Logo">
+      <div id="audioTitle">
+        <h4>${widgetConfig.title}</h4>
+      </div>
+      <button id="audioToggle" aria-label="Minimizar">−</button>
+    </div>
+    <div id="audioContent">
+      <div id="playerContainer">
+        <div class="status-message">Inicializando player...</div>
+      </div>
+      <div class="debug-info" id="debugInfo"></div>
+    </div>
+  `;
+  document.body.appendChild(widget);
+
+  const toggleBtn = document.getElementById("audioToggle");
+  const content = document.getElementById("audioContent");
+  const widgetElement = document.getElementById("audioWidget");
+  const titleDiv = document.getElementById("audioTitle");
+  
   // IDs das seções e respectivo slug no supabase
   const sectionSlugs = {
     "home": "home",
